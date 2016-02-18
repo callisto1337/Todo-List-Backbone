@@ -1,17 +1,17 @@
 $(document).ready(function() {
-
   var Item = Backbone.Model.extend({
     defaults: {
-      name: 'Новая задача',
-      done: false
+      title: 'Новая задача'
     }
   });
 
   var List = Backbone.Collection.extend({
-    model: Item
+    model: Item,
+    localStorage: new Backbone.LocalStorage("todos-backbone")
   });
 
-  var list = new List();
+  var list = new List;
+  list.fetch();
 
   var ItemView = Backbone.View.extend({
     tagName: 'li',
@@ -19,9 +19,9 @@ $(document).ready(function() {
       'click .btnDel': 'destroy'
     },
     render: function() {
-      this.$el.html(
-        '<div class="text">'+this.model.get('name')+'<span class="btnDel glyphicon glyphicon-remove"></span></div>'+' '
-        );
+      this.$el.html('<span class="liText"> '+
+        this.model.get('title')+'</span><span class="btnDel glyphicon glyphicon-remove"></span> '
+      );
     },
     initialize: function() {
       this.render();
@@ -29,7 +29,6 @@ $(document).ready(function() {
     },
     destroy: function() {
       this.model.destroy();
-      $('#counter').html(list.length + ' active tasks');
     },
     remove: function() {
     this.$el.remove();
@@ -39,37 +38,41 @@ $(document).ready(function() {
   var AppView = Backbone.View.extend({
     el: $('#listContainer'),
     events: {
-      'keypress #newTask': 'addItem',
-      'click .btnDel': 'collectionLength'
-    },
-    render: function() {
-      this.$el.append('<ul id="list"></ul>');
+      'keypress #newTask': 'addItem'
     },
     initialize: function(error) {
+      this.counterTasks();
       this.render();
-      list.bind('add', this.appendItem);
-      _(list.models).each(function(item) {
-        appendItem(item);
-      });
+      this.displayAll();
+      list.on('add', this.counterTasks);
+      list.on('add', this.appendItem);
+      list.bind('destroy', this.counterTasks);
     },
     addItem: function(e) {
       var valueTask = $('#newTask').val().trim();
-      valueTask = valueTask.replace(/[<, >]/g, "");
+      valueTask = valueTask.replace(/[<,>]/g, "");
       if (e.which === 13 && valueTask) {
-        var item = new Item({name: valueTask});
+        var item = new Item({title: valueTask});
         list.add(item);
+        item.save();
         valueTask = $('#newTask').val('');
       }
     },
     appendItem: function(item) {
       var itemview = new ItemView({model: item});
       $('#list').append(itemview.el);
-      this.conter++;
+    },
+    displayAll: function() {
+      _(list.models).each(function(item) {
+        var itemview = new ItemView({model: item});
+        $('#list').append(itemview.el);
+      });
+      this.counterTasks();
+    },
+    counterTasks: function() {
       $('#counter').html(list.length + ' active tasks');
     }
   });
 
-
-  var apView = new AppView();
-
+  var appView = new AppView();
 });

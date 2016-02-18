@@ -4,7 +4,7 @@
 	margin-right: auto;
 	margin-left: auto;
 	min-height:100%;
-	margin: 0px auto 75px auto;
+	margin: 0px auto 40px auto;
 } 
 
 h1 {
@@ -20,8 +20,9 @@ h1 {
 
 li {
 	list-style-type: none;
-	padding: 10px 10px 10px 20px;
-	font-size: 125%;
+	padding: 8px 8px 8px 15px;
+	font-size: 130%;
+	margin-left: 0px;
 } 
 
 li:nth-child(odd) {
@@ -50,15 +51,11 @@ ul {
 
 .glyphicon-remove {
 	float: right;
-	padding: 6px;
+	padding: 9px;
 	text-align: right;
 	cursor: pointer;
 	display: none;
 	transition: 3s;
-} 
-
-.text {
-	font-size: 120%;
 }
 
 footer {
@@ -73,5 +70,10 @@ li:nth-last-child(1) {
 }
 
 input {
-	margin-bottom: 5px;
+	margin-bottom: 7px;
+}
+
+.liText {
+	font-size: 130%;
+	padding-left: 10px;
 }
